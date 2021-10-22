@@ -188,20 +188,21 @@ func sm4KeysOperations() {
 }
 
 func sm4EncryptAndDecrypt() {
-	// SM4 key size must be 16
+	// SM4 key/iv size must be 16 bytes (128 bit)
 	key := []byte("1234567890abcdef")
+	iv := []byte("0000000000000000")
 
 	msg := []byte("123456")
 
 	// encrypt, mode = true
-	msgEncrypted, err := sm4.Sm4Cbc(key, msg, true)
+	msgEncrypted, err := sm4.Sm4Encrypt(key, iv, msg)
 	if err != nil {
 		log.Fatalf("SM4 encrypt error:%v\n", err)
 	}
 	fmt.Printf("msgEncrypted:%02x\n", msgEncrypted)
 
 	// decrypt, mode = false
-	msgDecrypted, err := sm4.Sm4Cbc(key, msgEncrypted, false)
+	msgDecrypted, err := sm4.Sm4Decrypt(key, iv, msgEncrypted)
 	if err != nil {
 		log.Fatalf("SM4 decrypt error:%v\n", err)
 	}

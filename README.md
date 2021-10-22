@@ -12,3 +12,4 @@ This project is inspired by some great projects, thanks them.
 # references:
 * https://github.com/tjfoc/gmsm
 * https://github.com/srderson/paillier
+* https://github.com/Hyperledger-TWGC/GM-interoperability

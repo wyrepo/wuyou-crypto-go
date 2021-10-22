@@ -46,7 +46,7 @@ func ReadKeyFromPemFile(FileName string, pwd []byte) (SM4Key, error) {
 func WriteKeyToPem(key SM4Key, pwd []byte) ([]byte, error) {
 	if pwd != nil {
 		block, err := x509.EncryptPEMBlock(rand.Reader,
-			"SM4 ENCRYPTED KEY", key, pwd, x509.PEMCipherAES256) //Use AES256  algorithms to encrypt SM4KEY
+			"SM4 ENCRYPTED KEY", key, pwd, x509.PEMCipherAES256) //Use AES256 algorithms to encrypt SM4KEY
 		if err != nil {
 			return nil, err
 		}

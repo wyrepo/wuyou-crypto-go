@@ -296,6 +296,9 @@ func SetIV(iv []byte) error {
 	return nil
 }
 
+/* use Sm4Encrypt and Sm4Decrypt functions instead, because the "iv" is changing when encrypting or decrypting */
+/* only Sm4Encrypt and Sm4Decrypt work the same as SM4-CBC-PKCS7Padding crypto written in Java */
+//Deprecated
 func Sm4Cbc(key []byte, in []byte, mode bool) (out []byte, err error) {
 	if len(key) != BlockSize {
 		return nil, errors.New("SM4: invalid key size " + strconv.Itoa(len(key)))
@@ -335,6 +338,7 @@ func Sm4Cbc(key []byte, in []byte, mode bool) (out []byte, err error) {
 
 	return out, nil
 }
+
 func Sm4Ecb(key []byte, in []byte, mode bool) (out []byte, err error) {
 	if len(key) != BlockSize {
 		return nil, errors.New("SM4: invalid key size " + strconv.Itoa(len(key)))
@@ -486,4 +490,50 @@ func Sm4OFB(key []byte, in []byte, mode bool) (out []byte, err error) {
 	}
 
 	return out, nil
+}
+
+//---------------------------------------------------------------------
+
+func Sm4Encrypt(key, iv, plainText []byte) ([]byte, error) {
+	block, err := NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	blockSize := block.BlockSize()
+	origData := doPkcs7Padding(plainText, blockSize)
+	blockMode := cipher.NewCBCEncrypter(block, iv)
+	encrypted := make([]byte, len(origData))
+	blockMode.CryptBlocks(encrypted, origData)
+	return encrypted, nil
+}
+
+func Sm4Decrypt(key, iv, cipherText []byte) ([]byte, error) {
+	block, err := NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	blockMode := cipher.NewCBCDecrypter(block, iv)
+	origData := make([]byte, len(cipherText))
+	blockMode.CryptBlocks(origData, cipherText)
+	origData = doPkcs7UnPadding(origData)
+	return origData, nil
+}
+
+func doPkcs7Padding(src []byte, blockSize int) []byte {
+	padding := blockSize - len(src)%blockSize
+	paddingText := bytes.Repeat([]byte{byte(padding)}, padding)
+	return append(src, paddingText...)
+}
+
+func doPkcs5Padding(src []byte, blockSize int) []byte {
+	return doPkcs7Padding(src, 8)
+}
+
+func doPkcs7UnPadding(src []byte) []byte {
+	length := len(src)
+	if length == 0 {
+		return src
+	}
+	unpadding := int(src[length-1])
+	return src[:(length - unpadding)]
 }
