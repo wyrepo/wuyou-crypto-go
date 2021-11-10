@@ -29,16 +29,27 @@ func main() {
 
 func sm2KeysOperations() {
 	// generate two keys
-	privateKay, err := sm2.GenerateKey(nil)
+	privateKey, err := sm2.GenerateKey(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	publicKey, _ := privateKay.Public().(*sm2.PublicKey)
-	fmt.Println(util.WritePrivateKeyToHex(privateKay)) // delete this line in project
-	fmt.Println(util.WritePublicKeyToHex(publicKey))   // delete this line in project
+	publicKey, _ := privateKey.Public().(*sm2.PublicKey)
+	privateKeyHex := util.WritePrivateKeyToHex(privateKey)
+	publicKeyHex := util.WritePublicKeyToHex(publicKey)
+	fmt.Println(privateKeyHex) // delete this line in project
+	fmt.Println(publicKeyHex)  // delete this line in project
+
+	privateKey2, err := util.ReadPrivateKeyFromHex(privateKeyHex)
+	if err != nil {
+		log.Fatal(err)
+	}
+	publicKey2, err := util.ReadPublicKeyFromHex(publicKeyHex)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// write key to pem (pem can be used to serialize)
-	privateKeyPem, err := util.WritePrivateKeyToPem(privateKay, nil)
+	privateKeyPem, err := util.WritePrivateKeyToPem(privateKey, nil)
 	if err != nil {
 		log.Fatalf("Write private key to pem error:%v\n", err)
 	}
@@ -46,18 +57,55 @@ func sm2KeysOperations() {
 	if err != nil {
 		log.Fatalf("Write public key to pem error:%v\n", err)
 	}
-	fmt.Printf("Private key pem:%02x\n", privateKeyPem) // delete this line in project
-	fmt.Printf("Public key pem:%02x\n", publicKeyPem)   // delete this line in project
+	fmt.Printf("Private key pem:%s\n", privateKeyPem) // delete this line in project
+	fmt.Printf("Public key pem:%s\n", publicKeyPem)   // delete this line in project
+
+	privateKeyPem2, err := util.WritePrivateKeyToPem(privateKey2, nil)
+	if err != nil {
+		log.Fatalf("Write private key 2 to pem error:%v\n", err)
+	}
+	publicKeyPem2, err := util.WritePublicKeyToPem(publicKey2)
+	if err != nil {
+		log.Fatalf("Write public key 2 to pem error:%v\n", err)
+	}
+	fmt.Printf("Private key 2 pem:%s\n", privateKeyPem2) // delete this line in project
+	fmt.Printf("Public key 2 pem:%s\n", publicKeyPem2)   // delete this line in project
 
 	// read key from pem (deserialize from pem)
-	privateKay, err = util.ReadPrivateKeyFromPem(privateKeyPem, nil)
+	privateKey3, err := util.ReadPrivateKeyFromPem(privateKeyPem, nil)
 	if err != nil {
 		log.Fatalf("Read private key from pem error:%v\n", err)
 	}
-	publicKey, err = util.ReadPublicKeyFromPem(publicKeyPem)
+	publicKey3, err := util.ReadPublicKeyFromPem(publicKeyPem)
 	if err != nil {
 		log.Fatalf("Read public key from pem error:%v\n", err)
 	}
+	fmt.Println(util.WritePrivateKeyToHex(privateKey3)) // delete this line in project
+	fmt.Println(util.WritePublicKeyToHex(publicKey3))   // delete this line in project
+
+	// write key to file
+	privateKeyPem4, err := util.WritePrivateKeyToPemFile("sk.pem", privateKey, nil)
+	if err != nil {
+		log.Fatalf("Write private key to pem file error:%v\n", err)
+	}
+	publicKeyPem4, err := util.WritePublicKeyToPemFile("pk.pem", publicKey)
+	if err != nil {
+		log.Fatalf("Write public key to pem file error:%v\n", err)
+	}
+	fmt.Printf("Private key 4 pem:%s\n", privateKeyPem4) // delete this line in project
+	fmt.Printf("Public key 4 pem:%s\n", publicKeyPem4)   // delete this line in project
+
+	// read key from file
+	privateKey4, err := util.ReadPrivateKeyFromPemFile("sk.pem", nil)
+	if err != nil {
+		log.Fatalf("Read private key 4 from pem file error:%v\n", err)
+	}
+	publicKey4, err := util.ReadPublicKeyFromPemFile("pk.pem")
+	if err != nil {
+		log.Fatalf("Read public key 4 from pem file error:%v\n", err)
+	}
+	fmt.Println(util.WritePrivateKeyToHex(privateKey4)) // delete this line in project
+	fmt.Println(util.WritePublicKeyToHex(publicKey4))   // delete this line in project
 
 	// check certificate's signature
 	templateReq := x509.CertificateRequest{
@@ -67,7 +115,7 @@ func sm2KeysOperations() {
 		},
 		SignatureAlgorithm: x509.SM2WithSM3,
 	}
-	certReqPem, err := util.CreateCertificateRequestToPem(&templateReq, privateKay)
+	certReqPem, err := util.CreateCertificateRequestToPem(&templateReq, privateKey)
 	if err != nil {
 		log.Fatalf("Create certificate request to pem error:%v\n", err)
 	}
@@ -85,11 +133,11 @@ func sm2KeysOperations() {
 
 func sm2EncryptAndDecrypt() {
 	// generate two keys
-	privateKay, err := sm2.GenerateKey(nil)
+	privateKey, err := sm2.GenerateKey(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	publicKey, _ := privateKay.Public().(*sm2.PublicKey)
+	publicKey, _ := privateKey.Public().(*sm2.PublicKey)
 
 	// encrypt and decrypt (1st WAY)
 	msg := []byte("123456")
@@ -98,7 +146,7 @@ func sm2EncryptAndDecrypt() {
 		log.Fatalf("SM2 Encrypt error:%v\n", err)
 	}
 	fmt.Printf("msgEncrypted:%02x\n", msgEncrypted)
-	msgDecrypted, err := privateKay.DecryptAsn1(msgEncrypted)
+	msgDecrypted, err := privateKey.DecryptAsn1(msgEncrypted)
 	if err != nil {
 		log.Fatalf("SM2 Decrypt error:%v\n", err)
 	}
@@ -110,7 +158,7 @@ func sm2EncryptAndDecrypt() {
 		log.Fatalf("SM2 Encrypt error:%v\n", err)
 	}
 	fmt.Printf("msgEncrypted2:%02x\n", msgEncrypted2)
-	msgDecrypted2, err := sm2.DecryptAsn1(privateKay, msgEncrypted2)
+	msgDecrypted2, err := sm2.DecryptAsn1(privateKey, msgEncrypted2)
 	if err != nil {
 		log.Fatalf("SM2 Decrypt error:%v\n", err)
 	}
@@ -122,7 +170,7 @@ func sm2EncryptAndDecrypt() {
 		log.Fatalf("SM2 Encrypt error:%v\n", err)
 	}
 	fmt.Printf("msgEncrypted3:%02x\n", msgEncrypted3)
-	msgDecrypted3, err := sm2.Decrypt(privateKay, msgEncrypted3, sm2.C1C2C3)
+	msgDecrypted3, err := sm2.Decrypt(privateKey, msgEncrypted3, sm2.C1C2C3)
 	if err != nil {
 		log.Fatalf("SM2 Decrypt error:%v\n", err)
 	}
@@ -131,15 +179,15 @@ func sm2EncryptAndDecrypt() {
 
 func sm2SignAndVerify() {
 	// generate two keys
-	privateKay, err := sm2.GenerateKey(nil)
+	privateKey, err := sm2.GenerateKey(nil)
 	if err != nil {
 		log.Fatal(err)
 	}
-	publicKey, _ := privateKay.Public().(*sm2.PublicKey)
+	publicKey, _ := privateKey.Public().(*sm2.PublicKey)
 
 	// sign
 	msg := []byte("123456")
-	sign, err := privateKay.Sign(rand.Reader, msg, nil)
+	sign, err := privateKey.Sign(rand.Reader, msg, nil)
 	if err != nil {
 		log.Fatalf("Sign using private key error:%v\n", err)
 	}
@@ -194,14 +242,14 @@ func sm4EncryptAndDecrypt() {
 
 	msg := []byte("123456")
 
-	// encrypt, mode = true
+	// encrypt
 	msgEncrypted, err := sm4.Sm4Encrypt(key, iv, msg)
 	if err != nil {
 		log.Fatalf("SM4 encrypt error:%v\n", err)
 	}
 	fmt.Printf("msgEncrypted:%02x\n", msgEncrypted)
 
-	// decrypt, mode = false
+	// decrypt
 	msgDecrypted, err := sm4.Sm4Decrypt(key, iv, msgEncrypted)
 	if err != nil {
 		log.Fatalf("SM4 decrypt error:%v\n", err)

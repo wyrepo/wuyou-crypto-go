@@ -16,14 +16,8 @@ func TestAdd(t *testing.T) {
 		eX = NewInt(publicKey, testOperands.x)
 		eY = NewInt(publicKey, testOperands.y)
 		sum := new(Int).Add(eX, eY).Decrypt(privateKey)
-		//require.Equal(t, testOperands.x.Add(testOperands.x, testOperands.y), sum)
 		fmt.Printf("add:%v\n", sum)
 	}
-
-	//publicKey2, _ := getKeyPair(t)
-	//eY = NewInt(publicKey2, testOperands.y)
-	//require.Panics(t, func() { new(Int).Add(eX, eY) })
-	//require.Panics(t, func() { new(Int).Add(eX, eY) })
 }
 
 func TestSub(t *testing.T) {
@@ -34,14 +28,8 @@ func TestSub(t *testing.T) {
 		eX = NewInt(publicKey, testOperands.x)
 		eY = NewInt(publicKey, testOperands.y)
 		diff := new(Int).Sub(eX, eY).Decrypt(privateKey)
-		//require.Equal(t, testOperands.x.Sub(testOperands.x, testOperands.y), diff)
 		fmt.Printf("sub:%v\n", diff)
 	}
-
-	//publicKey2, _ := getKeyPair(t)
-	//eY = NewInt(publicKey2, testOperands.y)
-	//require.Panics(t, func() { new(Int).Sub(eX, eY) })
-	//require.Panics(t, func() { new(Int).Sub(eX, eY) })
 }
 
 func TestAddPlaintext(t *testing.T) {
@@ -49,7 +37,6 @@ func TestAddPlaintext(t *testing.T) {
 	for _, testOperands := range getTestOperands() {
 		eX := NewInt(publicKey, testOperands.x)
 		sum := new(Int).AddPlaintext(eX, testOperands.y).Decrypt(privateKey)
-		//require.Equal(t, testOperands.x.Add(testOperands.x, testOperands.y), sum)
 		fmt.Printf("add:%v\n", sum)
 	}
 }
@@ -59,7 +46,6 @@ func TestMulPlaintext(t *testing.T) {
 	for _, testOperands := range getTestOperands() {
 		eX := NewInt(publicKey, testOperands.x)
 		prod := new(Int).MulPlaintext(eX, testOperands.y).Decrypt(privateKey)
-		//require.Equal(t, testOperands.x.Mul(testOperands.x, testOperands.y), prod)
 		fmt.Printf("mul:%v\n", prod)
 	}
 }
@@ -70,16 +56,13 @@ func TestDivPlaintext(t *testing.T) {
 	for _, testOperands := range getTestDivOperands() {
 		eX = NewInt(publicKey, testOperands.x)
 		quotient := new(Int).DivPlaintext(eX, testOperands.y).Decrypt(privateKey)
-		//require.Equal(t, testOperands.x.Div(testOperands.x, testOperands.y), quotient)
 		fmt.Printf("div:%v\n", quotient)
 	}
 
-	//require.Panics(t, func() { new(Int).DivPlaintext(eX, big.NewInt(0)) })
 }
 
 func getKeyPair(t *testing.T) (*key.PublicKey, *key.PrivateKey) {
 	publicKey, privateKey, err := key.NewKeyPair(256, math.MaxInt64)
-	//require.NoError(t, err)
 	if err != nil {
 		t.Error(err)
 	}

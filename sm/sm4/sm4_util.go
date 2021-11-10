@@ -78,7 +78,7 @@ func WriteKeyToPemFile(FileName string, key SM4Key, pwd []byte) error {
 		}
 	}
 	pemBytes := pem.EncodeToMemory(block)
-	err = ioutil.WriteFile(FileName, pemBytes, 0666)
+	err = ioutil.WriteFile(FileName, pemBytes, 0644)
 	if err != nil {
 		return err
 	}

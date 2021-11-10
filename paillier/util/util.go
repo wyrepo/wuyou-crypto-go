@@ -19,10 +19,7 @@ func IntToHexStr(value *num.Int) (string, error) {
 	if cipher == nil {
 		return "", errors.New("cipher (*big.Int) for converting is nil")
 	}
-	bytes, err := cipher.GobEncode()
-	if err != nil {
-		return "", err
-	}
+	bytes := cipher.Bytes()
 	return hex.EncodeToString(bytes), nil
 }
 
@@ -39,7 +36,7 @@ func HexStrToInt(pk *key.PublicKey, s string) (*num.Int, error) {
 		return nil, err
 	}
 	v := &big.Int{}
-	v.GobDecode(bytes)
+	v.SetBytes(bytes)
 	return &num.Int{Cipher: v, PublicKey: pk}, nil
 }
 

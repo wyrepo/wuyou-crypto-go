@@ -55,7 +55,7 @@ func ReadPublicKeyFromPem(publicKeyPem []byte) (*sm2.PublicKey, error) {
 }
 
 func WritePublicKeyToPem(key *sm2.PublicKey) ([]byte, error) {
-	der, err := MarshalSm2PublicKey(key) //Convert publick key to DER format
+	der, err := MarshalSm2PublicKey(key) //Convert public key to DER format
 	if err != nil {
 		return nil, err
 	}
