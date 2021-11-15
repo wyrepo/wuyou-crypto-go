@@ -23,7 +23,7 @@ func TestConverting(t *testing.T) {
 	y := big.NewInt(20)
 	eX = num.NewInt(publicKey, x)
 	eY = num.NewInt(publicKey, y)
-	sum := new(num.Int).Add(eX, eY).Decrypt(privateKey)
+	sum := new(num.Int).AddCiphertext(eX, eY).Decrypt(privateKey)
 
 	// Paillier.Int to Hex String (serialize)
 	eXStr, err := IntToHexStr(eX)
@@ -48,7 +48,7 @@ func TestConverting(t *testing.T) {
 	}
 
 	// add using new operands
-	sum2 := new(num.Int).Add(eXNum, eYNum).Decrypt(privateKey)
+	sum2 := new(num.Int).AddCiphertext(eXNum, eYNum).Decrypt(privateKey)
 	fmt.Printf("sum:%v, sum2:%v\n", sum, sum2)
 }
 
@@ -207,7 +207,7 @@ func TestCross(t *testing.T) {
 	y := big.NewInt(20)
 	eX = num.NewInt(publicKey, x)
 	eY = num.NewInt(publicKey, y)
-	sum := new(num.Int).Add(eX, eY).Decrypt(privateKey)
+	sum := new(num.Int).AddCiphertext(eX, eY).Decrypt(privateKey)
 	fmt.Printf("sum:%v\n", sum)
 	eXStr, err := IntToHexStr(eX)
 	if err != nil {
@@ -279,7 +279,7 @@ func TestCross2(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	sum := new(num.Int).Add(eXNum, eYNum).Decrypt(privateKey)
+	sum := new(num.Int).AddCiphertext(eXNum, eYNum).Decrypt(privateKey)
 	fmt.Printf("sum:%v\n", sum)
 
 }

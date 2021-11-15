@@ -15,7 +15,7 @@ func TestAdd(t *testing.T) {
 	for _, testOperands = range getTestOperands() {
 		eX = NewInt(publicKey, testOperands.x)
 		eY = NewInt(publicKey, testOperands.y)
-		sum := new(Int).Add(eX, eY).Decrypt(privateKey)
+		sum := new(Int).AddCiphertext(eX, eY).Decrypt(privateKey)
 		fmt.Printf("add:%v\n", sum)
 	}
 }
@@ -27,7 +27,7 @@ func TestSub(t *testing.T) {
 	for _, testOperands = range getTestOperands() {
 		eX = NewInt(publicKey, testOperands.x)
 		eY = NewInt(publicKey, testOperands.y)
-		diff := new(Int).Sub(eX, eY).Decrypt(privateKey)
+		diff := new(Int).SubCiphertext(eX, eY).Decrypt(privateKey)
 		fmt.Printf("sub:%v\n", diff)
 	}
 }

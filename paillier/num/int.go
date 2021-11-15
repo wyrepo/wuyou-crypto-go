@@ -66,9 +66,9 @@ func (z *Int) Decrypt(privateKey *key.PrivateKey) *big.Int {
 	return z.Cipher
 }
 
-// Add sets z to the encrypted sum x+y and returns z.
+// AddCiphertext sets z to the encrypted sum x+y and returns z.
 // If x.PublicKey != y.PublicKey, a pubic-keys-not-equal run-time panic occurs.
-func (z *Int) Add(x, y *Int) *Int {
+func (z *Int) AddCiphertext(x, y *Int) *Int {
 
 	key.RequirePublicKeysEqual(x.PublicKey, y.PublicKey)
 	z.init()
@@ -80,9 +80,9 @@ func (z *Int) Add(x, y *Int) *Int {
 	return z
 }
 
-// Sub sets z to the encrypted difference x-y and returns z.
+// SubCiphertext sets z to the encrypted difference x-y and returns z.
 // If x.PublicKey != y.PublicKey, a pubic-keys-not-equal run-time panic occurs.
-func (z *Int) Sub(x, y *Int) *Int {
+func (z *Int) SubCiphertext(x, y *Int) *Int {
 
 	key.RequirePublicKeysEqual(x.PublicKey, y.PublicKey)
 	z.init()
